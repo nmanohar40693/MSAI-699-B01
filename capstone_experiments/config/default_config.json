@@ -1,0 +1,12 @@
+{
+  "dataset_dir": "../capstone_preprocessing/output/prepared_dataset",
+  "gemini_model_name": "gemini-3.5-flash",
+  "temperature": 0.0,
+  "max_output_tokens": 1024,
+  "api_key": "",
+  "mock_mode": false,
+  "embedding_model_name": "all-MiniLM-L6-v2",
+  "top_k": 5,
+  "chunk_size": 500,
+  "chunk_overlap": 100
+}

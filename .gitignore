@@ -1,0 +1,24 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Caches and logs
+.ipynb_checkpoints/
+.DS_Store
+.env
+.venv/
+venv/
+env/
+*.log
+
+# Preprocessing generated directories
+capstone_preprocessing/output/
+capstone_preprocessing/work/
+
+# Experimental framework generated directories
+capstone_experiments/results/
+capstone_experiments/results/session_memory.json
+capstone_experiments/results/embedding_cache.json
+capstone_experiments/cache/
+.tempmediaStorage/

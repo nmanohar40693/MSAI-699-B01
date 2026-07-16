@@ -1,0 +1,6 @@
+google-genai>=0.1.0
+pydantic>=2.0
+requests>=2.31.0
+sentence-transformers>=2.2.2
+networkx>=3.0
+numpy>=1.20.0

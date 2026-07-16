@@ -1,0 +1,30 @@
+[
+  {
+    "task_id": "task-001",
+    "type": "bug_localization",
+    "target_version": "51045d16",
+    "description": "Locate where the duplicate pet name validation check occurs when registering or updating a pet. A user is reporting that duplicate names under the same owner should not be allowed, but we need to identify the exact validation logic in the controller or validator classes.",
+    "target_files": [
+      "src/main/java/org/springframework/samples/petclinic/owner/PetValidator.java",
+      "src/main/java/org/springframework/samples/petclinic/owner/PetController.java"
+    ]
+  },
+  {
+    "task_id": "task-002",
+    "type": "code_modification",
+    "target_version": "b3ee2c53",
+    "description": "We need to update the PetController to check for duplicate pet names before completing an update. Introduce validation in the update mapping that throws a duplicate error to the model if a pet with the same name already exists for the owner.",
+    "target_files": [
+      "src/main/java/org/springframework/samples/petclinic/owner/PetController.java"
+    ]
+  },
+  {
+    "task_id": "task-003",
+    "type": "test_case_generation",
+    "target_version": "b11afec3",
+    "description": "Write a unit test to verify that the welcome message displayed on the home page is correctly returned by the WelcomeController. The test should mock the ModelMap and verify that the 'welcome' view name is resolved.",
+    "target_files": [
+      "src/test/java/org/springframework/samples/petclinic/system/WelcomeControllerTests.java"
+    ]
+  }
+]
