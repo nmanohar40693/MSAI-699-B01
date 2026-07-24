@@ -1,4 +1,5 @@
 import os
+import time
 import json
 import logging
 import argparse
@@ -13,6 +14,7 @@ from src.strategies.base_strategy import (
     MemoryAugmentedPromptingStrategy,
     LifecycleGuidedContextStrategy
 )
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -167,6 +169,12 @@ def main():
                     json.dump(memory_data, mf, indent=2)
             except Exception as e:
                 logger.warning(f"Failed to update session memory file: {e}")
+
+        # Introduce a delay to avoid rate limit (429) errors on Gemini free tier
+        if not config.mock_mode:
+            logger.info("Sleeping for 15 seconds to avoid API rate limits...")
+            time.sleep(15.0)
+
 
     # 7. Compute and print statistics
     summary_stats = metrics_collector.compute_summary_statistics()
