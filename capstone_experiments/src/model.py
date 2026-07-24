@@ -70,31 +70,56 @@ class GeminiClient:
                 raise RuntimeError("GenAI client not initialized.")
                 
             logger.info(f"Sending prompt to Gemini API model ({self.model_name})...")
-            try:
-                response = self.client.models.generate_content(
-                    model=self.model_name,
-                    contents=combined_prompt,
-                    config=types.GenerateContentConfig(
-                        temperature=self.temperature,
-                        max_output_tokens=self.max_tokens
-                    )
-                )
-                latency = time.time() - start_time
-                
-                # Retrieve counts if available from usage_metadata
+            max_retries = 50
+            response = None
+            for attempt in range(max_retries):
                 try:
-                    input_tokens = response.usage_metadata.prompt_token_count
-                    output_tokens = response.usage_metadata.candidates_token_count
-                except Exception:
-                    input_tokens = len(combined_prompt) // 4
-                    output_tokens = len(response.text) // 4
-                    
-                return {
-                    "response_text": response.text,
-                    "latency_seconds": latency,
-                    "input_tokens": input_tokens,
-                    "output_tokens": output_tokens
-                }
-            except Exception as e:
-                logger.error(f"Error communicating with Gemini API: {e}")
-                raise e
+                    response = self.client.models.generate_content(
+                        model=self.model_name,
+                        contents=combined_prompt,
+                        config=types.GenerateContentConfig(
+                            temperature=self.temperature,
+                            max_output_tokens=self.max_tokens,
+                            http_options=types.HttpOptions(timeout=60000)
+                        )
+                    )
+
+
+                    break
+                except Exception as e:
+                    err_str = str(e).lower()
+                    if ("503" in err_str or "unavailable" in err_str or "timeout" in err_str or "timed out" in err_str or "cancelled" in err_str or "499" in err_str) and attempt < max_retries - 1:
+                        logger.warning(f"Gemini API error ({e}). Retrying in 15s (Attempt {attempt+1}/{max_retries})...")
+                        time.sleep(15.0)
+                    elif ("429" in err_str or "resource_exhausted" in err_str) and attempt < max_retries - 1:
+                        logger.warning(f"Gemini API 429 rate limit. Retrying in 40s (Attempt {attempt+1}/{max_retries})...")
+                        time.sleep(40.0)
+                    else:
+                        logger.error(f"Error communicating with Gemini API: {e}")
+                        raise e
+
+
+
+
+
+
+
+
+            latency = time.time() - start_time
+            
+            # Retrieve counts if available from usage_metadata
+            try:
+                input_tokens = response.usage_metadata.prompt_token_count or (len(combined_prompt) // 4)
+                output_tokens = response.usage_metadata.candidates_token_count or (len(response.text) // 4 if response.text else 0)
+            except Exception:
+                input_tokens = len(combined_prompt) // 4
+                output_tokens = len(response.text) // 4 if hasattr(response, "text") and response.text else 0
+
+                
+            return {
+                "response_text": response.text,
+                "latency_seconds": latency,
+                "input_tokens": input_tokens,
+                "output_tokens": output_tokens
+            }
+

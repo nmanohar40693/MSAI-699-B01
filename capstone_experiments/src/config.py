@@ -19,6 +19,14 @@ class ExperimentConfig:
         self.chunk_size = 500
         self.chunk_overlap = 100
 
+        # Graph optimization parameters
+        self.similarity_threshold = 0.0
+        self.max_depth = 2
+        self.weight_tests_class = 1.0
+        self.weight_resolves_issue = 1.0
+        self.weight_modified_file = 1.0
+        self.max_context_chars = 8000
+
         if config_path:
             self.load_from_json(config_path)
 
@@ -42,6 +50,14 @@ class ExperimentConfig:
         self.top_k = data.get("top_k", self.top_k)
         self.chunk_size = data.get("chunk_size", self.chunk_size)
         self.chunk_overlap = data.get("chunk_overlap", self.chunk_overlap)
+
+        # Load graph parameters
+        self.similarity_threshold = data.get("similarity_threshold", self.similarity_threshold)
+        self.max_depth = data.get("max_depth", self.max_depth)
+        self.weight_tests_class = data.get("weight_tests_class", self.weight_tests_class)
+        self.weight_resolves_issue = data.get("weight_resolves_issue", self.weight_resolves_issue)
+        self.weight_modified_file = data.get("weight_modified_file", self.weight_modified_file)
+        self.max_context_chars = data.get("max_context_chars", self.max_context_chars)
         
         logger.info(f"Loaded config successfully from {config_path}")
 
@@ -55,5 +71,12 @@ class ExperimentConfig:
             "embedding_model_name": self.embedding_model_name,
             "top_k": self.top_k,
             "chunk_size": self.chunk_size,
-            "chunk_overlap": self.chunk_overlap
+            "chunk_overlap": self.chunk_overlap,
+            "similarity_threshold": self.similarity_threshold,
+            "max_depth": self.max_depth,
+            "weight_tests_class": self.weight_tests_class,
+            "weight_resolves_issue": self.weight_resolves_issue,
+            "weight_modified_file": self.weight_modified_file,
+            "max_context_chars": self.max_context_chars
         }
+

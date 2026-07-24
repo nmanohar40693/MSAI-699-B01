@@ -31,9 +31,10 @@ class ExperimentMetricsCollector:
             return {}
 
         latencies = [r["latency_seconds"] for r in self.raw_records]
-        input_tokens = [r["input_tokens"] for r in self.raw_records]
-        output_tokens = [r["output_tokens"] for r in self.raw_records]
+        input_tokens = [r["input_tokens"] if r["input_tokens"] is not None else 0 for r in self.raw_records]
+        output_tokens = [r["output_tokens"] if r["output_tokens"] is not None else 0 for r in self.raw_records]
         contexts = [r["context_length_chars"] for r in self.raw_records]
+
 
         summary = {
             "total_runs": len(self.raw_records),

@@ -142,13 +142,29 @@ class LifecycleGuidedContextStrategy(BaseContextStrategy):
             self.indexer = RAGIndexer(dataset_dir, config.embedding_model_name)
             self.indexer.build_index_for_version(version, config.chunk_size, config.chunk_overlap)
 
-        # Find top 2 file chunks to serve as entry points
+        # Find file chunks to serve as entry points using optimized top_k
         query = task["description"]
-        top_matches = self.indexer.search(query=query, top_k=2)
-        entry_nodes = [m["artifact_id"] for m in top_matches]
+        top_matches = self.indexer.search(query=query, top_k=config.top_k)
+        
+        # Filter entry points by similarity threshold
+        entry_nodes = [
+            m["artifact_id"] for m in top_matches
+            if m["similarity_score"] >= config.similarity_threshold
+        ]
 
-        # 3. Traverse the graph to retrieve connected lifecycle artifacts (depth 2)
-        traversed_nodes = self.graph_builder.traverse_for_context(entry_nodes, max_depth=2)
+        # 3. Traverse the graph using optimized weights and character budget
+        weights = {
+            "tests_class": config.weight_tests_class,
+            "resolves_issue": config.weight_resolves_issue,
+            "modified_file": config.weight_modified_file
+        }
+        
+        traversed_nodes = self.graph_builder.traverse_with_weights(
+            entry_nodes=entry_nodes,
+            max_depth=config.max_depth,
+            weights=weights,
+            max_chars=config.max_context_chars
+        )
 
         # 4. Format context block
         context_blocks = ["=== Lifecycle-Guided Project Knowledge Graph Context ==="]
@@ -172,3 +188,4 @@ class LifecycleGuidedContextStrategy(BaseContextStrategy):
             
         context_blocks.append("=========================================================")
         return "\n".join(context_blocks)
+

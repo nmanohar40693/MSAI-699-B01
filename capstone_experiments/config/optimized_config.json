@@ -9,7 +9,12 @@
   "mock_mode": false,
   "embedding_model_name": "sentence-transformers/all-mpnet-base-v2",
   "top_k": 5,
-
   "chunk_size": 500,
-  "chunk_overlap": 100
+  "chunk_overlap": 100,
+  "similarity_threshold": 0.2329522344054458,
+  "max_depth": 3,
+  "weight_tests_class": 2.30187222652901,
+  "weight_resolves_issue": 2.4363736247883008,
+  "weight_modified_file": 1.8027155948587055,
+  "max_context_chars": 2010
 }

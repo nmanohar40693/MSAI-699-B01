@@ -183,6 +183,79 @@ class LifecycleProjectGraph:
                     
         return retrieved_nodes
 
+    def traverse_with_weights(self, entry_nodes: list, max_depth: int, weights: dict, max_chars: int) -> list:
+        """BFS graph traversal with edge weights, score ranking, and context character budgeting."""
+        # queue elements: (node_id, depth, score)
+        queue = [(node, 0, 1.0) for node in entry_nodes if self.graph.has_node(node)]
+        visited = {}
+        for node, _, score in queue:
+            visited[node] = (score, 0)
+            
+        retrieved = []
+        
+        while queue:
+            curr, depth, score = queue.pop(0)
+            retrieved.append((curr, self.graph.nodes[curr], depth, score))
+            
+            if depth >= max_depth:
+                continue
+                
+            # Successors
+            for n in self.graph.successors(curr):
+                rel_type = self.graph[curr][n].get('relationship_type', 'unknown')
+                w = weights.get(rel_type, 1.0)
+                new_score = score * w / (depth + 1)
+                if n not in visited or new_score > visited[n][0]:
+                    visited[n] = (new_score, depth + 1)
+                    queue.append((n, depth + 1, new_score))
+                    
+            # Predecessors
+            for n in self.graph.predecessors(curr):
+                rel_type = self.graph[n][curr].get('relationship_type', 'unknown')
+                w = weights.get(rel_type, 1.0)
+                new_score = score * w / (depth + 1)
+                if n not in visited or new_score > visited[n][0]:
+                    visited[n] = (new_score, depth + 1)
+                    queue.append((n, depth + 1, new_score))
+                    
+        # Deduplicate keeping highest score
+        unique_nodes = {}
+        for node_id, data, depth, score in retrieved:
+            if node_id not in unique_nodes or score > unique_nodes[node_id][2]:
+                unique_nodes[node_id] = (data, depth, score)
+                
+        # Sort by score descending
+        sorted_nodes = sorted(unique_nodes.items(), key=lambda x: x[1][2], reverse=True)
+        
+        selected_nodes = []
+        total_chars = 0
+        
+        # Format character budget check
+        for node_id, (data, depth, score) in sorted_nodes:
+            node_type = data.get("type", "unknown")
+            stage = data.get("lifecycle_stage", "unknown")
+            name = data.get("name", "unnamed")
+            
+            block_header = f"Node: {node_id} (Type: {node_type}, Stage: {stage}, Relation Depth: {depth})"
+            
+            if node_type == "commit":
+                content = f"Message: {data.get('message', '')}\nAuthor: {data.get('author', '')}\nTimestamp: {data.get('timestamp', '')}"
+            elif node_type in ["issue", "pull_request"]:
+                content = f"Title: {name}\nState: {data.get('state', '')}\nDescription: {data.get('text_content', '')}"
+            else:
+                content = f"Name: {name}\nPath: {data.get('path', '')}"
+                
+            node_text = f"{block_header}\n{content}\n"
+            
+            if total_chars + len(node_text) <= max_chars:
+                selected_nodes.append((node_id, data, depth))
+                total_chars += len(node_text)
+            else:
+                break
+                
+        return selected_nodes
+
+
     def _resolve_node_id(self, raw_id: str, version_tag: str, files_meta: list) -> str:
         """Resolves file paths or hashes to the exact node identifier inside the graph."""
         # Check if raw_id is a file path and match with artifact_id

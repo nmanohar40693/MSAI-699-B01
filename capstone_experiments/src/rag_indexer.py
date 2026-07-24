@@ -9,14 +9,17 @@ logger = logging.getLogger(__name__)
 
 # Lazy load sentence-transformers to avoid startup overhead if in mock mode
 _model_instance = None
+_current_model_name = None
 
 def get_embedding_model(model_name: str):
-    global _model_instance
-    if _model_instance is None:
+    global _model_instance, _current_model_name
+    if _model_instance is None or _current_model_name != model_name:
         logger.info(f"Loading SentenceTransformer model: {model_name}...")
         from sentence_transformers import SentenceTransformer
         _model_instance = SentenceTransformer(model_name)
+        _current_model_name = model_name
     return _model_instance
+
 
 class RAGIndexer:
     def __init__(self, dataset_dir: str, embedding_model_name: str = "all-MiniLM-L6-v2", cache_dir: str = None):
@@ -89,9 +92,11 @@ class RAGIndexer:
                 with open(full_path, "r", encoding="utf-8", errors="ignore") as f:
                     content = f.read()
                 
-                # Check cache via content hash
+                # Check cache via content hash and model name
                 content_sha = hashlib.sha256(content.encode("utf-8")).hexdigest()
-                cache_file = os.path.join(self.cache_dir, f"{content_sha}_{chunk_size}_{chunk_overlap}.json")
+                clean_model_name = self.model_name.replace("/", "_")
+                cache_file = os.path.join(self.cache_dir, f"{content_sha}_{clean_model_name}_{chunk_size}_{chunk_overlap}.json")
+
                 
                 file_chunks = []
                 file_embeddings = []
