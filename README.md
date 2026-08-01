@@ -159,3 +159,61 @@ The consolidated table below displays the statistical results captured during li
 *   **Context Efficiency**: The proposed Lifecycle-Guided Strategy achieves a **62.1% reduction in context size** and a **60.6% reduction in input token consumption** compared to standard RAG.
 *   **Optuna Tuning**: Localized the optimal context budget (2,010 characters) and edge traversal weights, achieving a best composite objective score of **0.8765** (Trial 98).
 *   **Explainability**: The Random Forest surrogate model achieved **99.31% cross-validation accuracy** and an F1-score of **0.9524**. TreeSHAP analysis verified that topological features (`graph_distance` and `traceability_degree` centrality) are the most globally significant features in context selection.
+
+---
+
+## 7. Week 6 Testing and Diagnostics
+
+This section covers the diagnostic suite and testing framework implemented in Week 6 to evaluate context construction strategies, perform controlled paired A/B comparisons, and run robust fault injection tests.
+
+### 7.1. Setup & Requirements
+*   **Python Version**: Python 3.8+ (tested on Python 3.13)
+*   **Dependencies**: Ensure package dependencies listed in `capstone_experiments/requirements.txt` are installed.
+*   **Dataset Requirements**: The complete 10-task evaluation dataset is located at `/Users/krithigamahadevan/capstone_experiments/data/evaluation_tasks.json`.
+*   **Configuration Requirements**: The diagnostic runner dynamically reads the configurations from `capstone_experiments/config/optimized_config.json` via the process-level `CAPSTONE_CONFIG_PATH` environment variable.
+
+### 7.2. Execution Commands
+Navigate to the experiments directory:
+```bash
+cd capstone_experiments
+```
+
+Run the diagnostic suite in different modes:
+*   **Run All Diagnostics**:
+    ```bash
+    python3 run_diagnostics.py --mode all
+    ```
+*   **Run Leave-One-Task-Out Generalization Testing**:
+    ```bash
+    python3 run_diagnostics.py --mode generalization
+    ```
+*   **Run Controlled Paired Comparison**:
+    ```bash
+    python3 run_diagnostics.py --mode paired
+    ```
+*   **Run Fault Injection Suite**:
+    ```bash
+    python3 run_diagnostics.py --mode fault
+    ```
+
+### 7.3. Expected Outputs
+Diagnostic runs generate structured JSON reports inside `capstone_experiments/results/diagnostics/` named as `diagnostics_run_%Y%m%d_%H%M%S.json` containing:
+*   Run metadata and dynamic configuration snapshots.
+*   Fold-by-fold metrics (Precision@5, Recall@5, F1, MRR, latency, RSS peak memory) for generalization testing.
+*   Task-by-task performance deltas (absolute and percentage differences) for the controlled paired comparison.
+*   Observed behaviors, status records, and exception details for all fault test cases (`FLT-001` through `FLT-005`).
+
+### 7.4. Troubleshooting Guidance
+*   **Model Loading Cold-Starts**: The first task execution will load the SentenceTransformer embedding model `all-mpnet-base-v2` from Hugging Face into memory. A warm-up retrieval call is executed before collecting measurements to ensure that model download and graph builder cold-start initialization times are excluded from task-level latency calculations.
+*   **Missing Dataset Path**: If the configured dataset path does not exist, the runner automatically attempts to fallback to a valid local workspace checkout path.
+*   **Missing target_files Key**: In malformed task input scenarios where the ground-truth target file list is missing, retrieval continues normally, but the diagnostic suite records that retrieval-quality metrics cannot be calculated.
+
+### 7.5. Reproducibility Limitations
+*   **Gemini Generation Variance**: A temperature of `0.0` does not guarantee bit-wise identical Gemini text generation outputs due to remote backend execution path variations.
+*   **Seed Management**: No explicit random seeds are initialized by `run_diagnostics.py` (since local RAG indexing operates via deterministic vector calculations).
+*   **Embedding Variations**: Cosine similarity calculations and embedding values may vary slightly depending on processor architecture (CPU/GPU) or PyTorch/SentenceTransformer package versions.
+*   **Memory RSS Measurements**: `ru_maxrss` measures process-level cumulative peak memory rather than strategy-isolated footprint.
+*   **Dataset Location**: The complete 10-task dataset is external to the active repository clone unless manually copied in.
+*   **Configuration State**: `CAPSTONE_CONFIG_PATH` relies on process-level environment configuration state.
+*   **Independence**: The 10-task evaluation set is not an independent held-out set if some tasks participated in the initial Week 4 optimization loop.
+

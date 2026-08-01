@@ -218,6 +218,9 @@ class LifecycleProjectGraph:
                     visited[n] = (new_score, depth + 1)
                     queue.append((n, depth + 1, new_score))
                     
+        self.last_visited_count = len(visited)
+        self.last_max_depth_visited = max([depth for _, depth in visited.values()]) if visited else 0
+
         # Deduplicate keeping highest score
         unique_nodes = {}
         for node_id, data, depth, score in retrieved:

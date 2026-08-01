@@ -8,6 +8,8 @@ logger = logging.getLogger(__name__)
 class BaseContextStrategy(ABC):
     def __init__(self, name: str):
         self.name = name
+        self.last_retrieved_files = []
+        self.last_diagnostics = {}
 
     @abstractmethod
     def construct_context(self, task: dict, dataset_dir: str) -> str:
@@ -23,6 +25,7 @@ class PromptOnlyStrategy(BaseContextStrategy):
         """Prompt-only strategy does not construct extra repository context. 
         It returns an empty string, relying purely on the default query.
         """
+        self.last_retrieved_files = []
         return ""
 
 
@@ -31,9 +34,11 @@ class RAGStrategy(BaseContextStrategy):
         super().__init__("RAG")
         self.indexer = None
         self.last_version = None
+        self.last_retrieved_files = []
 
     def construct_context(self, task: dict, dataset_dir: str) -> str:
         """Retrieves matching code/document chunks using SentenceTransformer similarity."""
+        self.last_retrieved_files = []
         version = task.get("target_version")
         if not version:
             return ""
@@ -41,7 +46,9 @@ class RAGStrategy(BaseContextStrategy):
         # Retrieve settings from config
         from src.config import ExperimentConfig
         script_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        config_path = os.path.join(script_dir, "config", "default_config.json")
+        config_path = os.environ.get("CAPSTONE_CONFIG_PATH")
+        if not config_path or not os.path.exists(config_path):
+            config_path = os.path.join(script_dir, "config", "default_config.json")
         config = ExperimentConfig(config_path)
 
         from src.rag_indexer import RAGIndexer
@@ -61,6 +68,23 @@ class RAGStrategy(BaseContextStrategy):
         query = task["description"]
         top_k = config.top_k
         matched_chunks = self.indexer.search(query=query, top_k=top_k)
+
+        # Populate retrieved files list
+        self.last_retrieved_files = [chunk["source_file"] for chunk in matched_chunks]
+
+        # Diagnostics
+        max_score = max([m["similarity_score"] for m in matched_chunks]) if matched_chunks else 0.0
+        candidates_before = len(matched_chunks)
+        self.last_diagnostics = {
+            "maximum_semantic_similarity_score": float(max_score),
+            "candidates_before_threshold_filtering": int(candidates_before),
+            "entry_nodes_after_threshold_filtering": int(candidates_before),
+            "graph_traversal_terminated_early_zero_entry_nodes": False,
+            "graph_traversal_depth": 0,
+            "graph_nodes_visited": 0,
+            "retrieved_artifact_count": int(len(self.last_retrieved_files)),
+            "retrieval_completion_status": "success"
+        }
 
         # Format context block
         context_blocks = []
@@ -83,6 +107,7 @@ class MemoryAugmentedPromptingStrategy(BaseContextStrategy):
 
     def construct_context(self, task: dict, dataset_dir: str) -> str:
         """Retrieves accumulated session/project memory from prior interactions."""
+        self.last_retrieved_files = []
         script_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         memory_path = os.path.join(script_dir, "results", "session_memory.json")
         
@@ -116,9 +141,11 @@ class LifecycleGuidedContextStrategy(BaseContextStrategy):
         self.graph_builder = None
         self.indexer = None
         self.last_version = None
+        self.last_retrieved_files = []
 
     def construct_context(self, task: dict, dataset_dir: str) -> str:
         """Traverses the Lifecycle-Guided Project Knowledge Graph starting from semantic entry points."""
+        self.last_retrieved_files = []
         version = task.get("target_version")
         if not version:
             return ""
@@ -126,7 +153,9 @@ class LifecycleGuidedContextStrategy(BaseContextStrategy):
         # Load configs
         from src.config import ExperimentConfig
         script_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        config_path = os.path.join(script_dir, "config", "default_config.json")
+        config_path = os.environ.get("CAPSTONE_CONFIG_PATH")
+        if not config_path or not os.path.exists(config_path):
+            config_path = os.path.join(script_dir, "config", "default_config.json")
         config = ExperimentConfig(config_path)
 
         # 1. Initialize and Build the Knowledge Graph for this version
@@ -169,6 +198,9 @@ class LifecycleGuidedContextStrategy(BaseContextStrategy):
         # 4. Format context block
         context_blocks = ["=== Lifecycle-Guided Project Knowledge Graph Context ==="]
         for node_id, data, depth in traversed_nodes:
+            if data.get("type") not in ["commit", "issue", "pull_request"]:
+                self.last_retrieved_files.append(data.get("path", ""))
+            
             # Format according to type
             node_type = data.get("type", "unknown")
             stage = data.get("lifecycle_stage", "unknown")
@@ -187,5 +219,22 @@ class LifecycleGuidedContextStrategy(BaseContextStrategy):
             context_blocks.append(f"{block_header}\n{content}\n")
             
         context_blocks.append("=========================================================")
+
+        # Diagnostics
+        max_score = max([m["similarity_score"] for m in top_matches]) if top_matches else 0.0
+        candidates_before = len(top_matches)
+        entry_nodes_after = len(entry_nodes)
+        terminated_early = (entry_nodes_after == 0)
+        self.last_diagnostics = {
+            "maximum_semantic_similarity_score": float(max_score),
+            "candidates_before_threshold_filtering": int(candidates_before),
+            "entry_nodes_after_threshold_filtering": int(entry_nodes_after),
+            "graph_traversal_terminated_early_zero_entry_nodes": bool(terminated_early),
+            "graph_traversal_depth": int(self.graph_builder.last_max_depth_visited) if hasattr(self.graph_builder, "last_max_depth_visited") else 0,
+            "graph_nodes_visited": int(self.graph_builder.last_visited_count) if hasattr(self.graph_builder, "last_visited_count") else 0,
+            "retrieved_artifact_count": int(len(self.last_retrieved_files)),
+            "retrieval_completion_status": "success"
+        }
+
         return "\n".join(context_blocks)
 
