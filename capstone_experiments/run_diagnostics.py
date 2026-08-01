@@ -11,7 +11,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__))))
 
 from src.config import ExperimentConfig
 from src.evaluation import EvaluationLoader
-from src.strategies.base_strategy import RAGStrategy, LifecycleGuidedContextStrategy
+from src.strategies.base_strategy import RAGStrategy, LifecycleGuidedContextStrategy, PromptOnlyStrategy, MemoryAugmentedPromptingStrategy
 
 # Try to import from run_pilot, fallback or raise if failed
 try:
@@ -248,39 +248,59 @@ def main():
 
         # 2. Controlled Paired Comparison (Step 1E)
         if args.mode in ["all", "paired"]:
-            logger.info("Starting Controlled Paired Comparison (Standard RAG vs. Lifecycle-Guided)...")
+            logger.info("Starting Controlled Paired Comparison (all four strategies)...")
             
             # Instantiate strategies
-            strategy_a = RAGStrategy()
-            strategy_b = LifecycleGuidedContextStrategy()
+            strategy_prompt = PromptOnlyStrategy()
+            strategy_rag = RAGStrategy()
+            strategy_mem = MemoryAugmentedPromptingStrategy()
+            strategy_life = LifecycleGuidedContextStrategy()
             
             # Exclude model initialization latency via warm-up policy
             if len(tasks) > 0:
-                run_warm_up(strategy_a, tasks[0])
-                run_warm_up(strategy_b, tasks[0])
+                run_warm_up(strategy_prompt, tasks[0])
+                run_warm_up(strategy_rag, tasks[0])
+                run_warm_up(strategy_mem, tasks[0])
+                run_warm_up(strategy_life, tasks[0])
             
             comparison_results = []
             
             for task in tasks:
                 task_id = task["task_id"]
                 logger.info(f"Comparing strategies on task {task_id}...")
+                target_files = [clean_file_path(tf) for tf in task.get("target_files", [])]
+                
+                # Condition Prompt-Only
+                start_time_prompt = time.perf_counter()
+                context_prompt = strategy_prompt.construct_context(task, config.dataset_dir)
+                duration_prompt = time.perf_counter() - start_time_prompt
+                retrieved_prompt = list(strategy_prompt.last_retrieved_files)
+                prec_prompt, rec_prompt, f1_prompt, mrr_prompt = calculate_metrics(retrieved_prompt, target_files, k=5)
+                mem_prompt = get_peak_memory_mb()
                 
                 # Condition A: Standard RAG
-                start_time_a = time.perf_counter()
-                context_a = strategy_a.construct_context(task, config.dataset_dir)
-                duration_a = time.perf_counter() - start_time_a
-                retrieved_a = list(strategy_a.last_retrieved_files)
-                target_files = [clean_file_path(tf) for tf in task.get("target_files", [])]
-                prec_a, rec_a, f1_a, mrr_a = calculate_metrics(retrieved_a, target_files, k=5)
-                mem_a = get_peak_memory_mb()
+                start_time_rag = time.perf_counter()
+                context_rag = strategy_rag.construct_context(task, config.dataset_dir)
+                duration_rag = time.perf_counter() - start_time_rag
+                retrieved_rag = list(strategy_rag.last_retrieved_files)
+                prec_rag, rec_rag, f1_rag, mrr_rag = calculate_metrics(retrieved_rag, target_files, k=5)
+                mem_rag = get_peak_memory_mb()
+                
+                # Condition Memory-Augmented
+                start_time_mem = time.perf_counter()
+                context_mem = strategy_mem.construct_context(task, config.dataset_dir)
+                duration_mem = time.perf_counter() - start_time_mem
+                retrieved_mem = list(strategy_mem.last_retrieved_files)
+                prec_mem, rec_mem, f1_mem, mrr_mem = calculate_metrics(retrieved_mem, target_files, k=5)
+                mem_mem = get_peak_memory_mb()
                 
                 # Condition B: Lifecycle-Guided Strategy
-                start_time_b = time.perf_counter()
-                context_b = strategy_b.construct_context(task, config.dataset_dir)
-                duration_b = time.perf_counter() - start_time_b
-                retrieved_b = list(strategy_b.last_retrieved_files)
-                prec_b, rec_b, f1_b, mrr_b = calculate_metrics(retrieved_b, target_files, k=5)
-                mem_b = get_peak_memory_mb()
+                start_time_life = time.perf_counter()
+                context_life = strategy_life.construct_context(task, config.dataset_dir)
+                duration_life = time.perf_counter() - start_time_life
+                retrieved_life = list(strategy_life.last_retrieved_files)
+                prec_life, rec_life, f1_life, mrr_life = calculate_metrics(retrieved_life, target_files, k=5)
+                mem_life = get_peak_memory_mb()
                 
                 # Compute deltas (B - A)
                 def get_deltas(val_a, val_b):
@@ -291,35 +311,57 @@ def main():
                 task_comp = {
                     "task_id": task_id,
                     "lifecycle_stage": task.get("type", "unknown"),
+                    "condition_prompt_only": {
+                        "retrieved_artifacts": retrieved_prompt,
+                        "precision": prec_prompt,
+                        "recall": rec_prompt,
+                        "f1_score": f1_prompt,
+                        "mrr": mrr_prompt,
+                        "latency": duration_prompt,
+                        "memory_usage_mb": mem_prompt,
+                        "status": "success",
+                        "error_details": None
+                    },
                     "condition_a": {
-                        "retrieved_artifacts": retrieved_a,
-                        "precision": prec_a,
-                        "recall": rec_a,
-                        "f1_score": f1_a,
-                        "mrr": mrr_a,
-                        "latency": duration_a,
-                        "memory_usage_mb": mem_a,
+                        "retrieved_artifacts": retrieved_rag,
+                        "precision": prec_rag,
+                        "recall": rec_rag,
+                        "f1_score": f1_rag,
+                        "mrr": mrr_rag,
+                        "latency": duration_rag,
+                        "memory_usage_mb": mem_rag,
+                        "status": "success",
+                        "error_details": None
+                    },
+                    "condition_memory_augmented": {
+                        "retrieved_artifacts": retrieved_mem,
+                        "precision": prec_mem,
+                        "recall": rec_mem,
+                        "f1_score": f1_mem,
+                        "mrr": mrr_mem,
+                        "latency": duration_mem,
+                        "memory_usage_mb": mem_mem,
                         "status": "success",
                         "error_details": None
                     },
                     "condition_b": {
-                        "retrieved_artifacts": retrieved_b,
-                        "precision": prec_b,
-                        "recall": rec_b,
-                        "f1_score": f1_b,
-                        "mrr": mrr_b,
-                        "latency": duration_b,
-                        "memory_usage_mb": mem_b,
+                        "retrieved_artifacts": retrieved_life,
+                        "precision": prec_life,
+                        "recall": rec_life,
+                        "f1_score": f1_life,
+                        "mrr": mrr_life,
+                        "latency": duration_life,
+                        "memory_usage_mb": mem_life,
                         "status": "success",
                         "error_details": None
                     },
                     "deltas": {
-                        "precision": get_deltas(prec_a, prec_b),
-                        "recall": get_deltas(rec_a, rec_b),
-                        "f1_score": get_deltas(f1_a, f1_b),
-                        "mrr": get_deltas(mrr_a, mrr_b),
-                        "latency": get_deltas(duration_a, duration_b),
-                        "memory_usage_mb": get_deltas(mem_a, mem_b) if mem_a is not None and mem_b is not None else None
+                        "precision": get_deltas(prec_rag, prec_life),
+                        "recall": get_deltas(rec_rag, rec_life),
+                        "f1_score": get_deltas(f1_rag, f1_life),
+                        "mrr": get_deltas(mrr_rag, mrr_life),
+                        "latency": get_deltas(duration_rag, duration_life),
+                        "memory_usage_mb": get_deltas(mem_rag, mem_life) if mem_rag is not None and mem_life is not None else None
                     }
                 }
                 comparison_results.append(task_comp)
@@ -340,7 +382,7 @@ def main():
                 
             # C. Complete Metric Verification
             for r in comparison_results:
-                for cond in ["condition_a", "condition_b"]:
+                for cond in ["condition_a", "condition_b", "condition_prompt_only", "condition_memory_augmented"]:
                     for metric in ["precision", "recall", "f1_score", "mrr", "latency"]:
                         if r[cond][metric] is None:
                             raise ValueError(f"Complete Metric Verification Failure: Metric {metric} in {cond} is missing for task {r['task_id']}")
@@ -348,16 +390,26 @@ def main():
             # Compute Summary Statistics (mean and standard deviation)
             summary_stats = {}
             for metric in ["precision", "recall", "f1_score", "mrr", "latency", "memory_usage_mb"]:
+                vals_prompt = [r["condition_prompt_only"][metric] for r in comparison_results if r["condition_prompt_only"][metric] is not None]
                 vals_a = [r["condition_a"][metric] for r in comparison_results if r["condition_a"][metric] is not None]
+                vals_mem = [r["condition_memory_augmented"][metric] for r in comparison_results if r["condition_memory_augmented"][metric] is not None]
                 vals_b = [r["condition_b"][metric] for r in comparison_results if r["condition_b"][metric] is not None]
                 abs_diffs = [r["deltas"][metric]["absolute_diff"] for r in comparison_results if r["deltas"][metric] is not None]
                 pct_diffs = [r["deltas"][metric]["percent_diff"] for r in comparison_results if r["deltas"][metric] is not None and r["deltas"][metric]["percent_diff"] is not None]
                 
                 import numpy as np
                 summary_stats[metric] = {
+                    "condition_prompt_only": {
+                        "mean": float(np.mean(vals_prompt)) if vals_prompt else 0.0,
+                        "std": float(np.std(vals_prompt)) if vals_prompt else 0.0
+                    },
                     "condition_a": {
                         "mean": float(np.mean(vals_a)) if vals_a else 0.0,
                         "std": float(np.std(vals_a)) if vals_a else 0.0
+                    },
+                    "condition_memory_augmented": {
+                        "mean": float(np.mean(vals_mem)) if vals_mem else 0.0,
+                        "std": float(np.std(vals_mem)) if vals_mem else 0.0
                     },
                     "condition_b": {
                         "mean": float(np.mean(vals_b)) if vals_b else 0.0,
