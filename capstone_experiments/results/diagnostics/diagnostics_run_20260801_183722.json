@@ -1,0 +1,1398 @@
+{
+  "metadata": {
+    "run_timestamp": "2026-08-01T18:37:22.911097",
+    "diagnostic_mode": "all",
+    "seed_initialization_by_diagnostics": false,
+    "configuration_file": "config/optimized_config.json",
+    "latency_measurement_policy": "Excludes model load and graph/indexer initialization via a warm-up retrieval call per strategy."
+  },
+  "config_snapshot": {
+    "dataset_dir": "/Users/krithigamahadevan/capstone_preprocessing/output/prepared_dataset",
+    "gemini_model_name": "gemini-3.5-flash",
+    "temperature": 0.0,
+    "max_output_tokens": 1024,
+    "mock_mode": false,
+    "embedding_model_name": "sentence-transformers/all-mpnet-base-v2",
+    "top_k": 5,
+    "chunk_size": 500,
+    "chunk_overlap": 100,
+    "similarity_threshold": 0.2329522344054458,
+    "max_depth": 3,
+    "weight_tests_class": 2.30187222652901,
+    "weight_resolves_issue": 2.4363736247883008,
+    "weight_modified_file": 1.8027155948587055,
+    "max_context_chars": 2010
+  },
+  "test_results": {
+    "leave_one_task_out_testing": {
+      "tasks": [
+        {
+          "fold_number": 1,
+          "task_id": "task-001",
+          "precision": 0.4,
+          "recall": 1.0,
+          "f1_score": 0.5714285714285715,
+          "mrr": 1.0,
+          "latency": 0.05502220802009106,
+          "memory_usage_mb": 815.703125,
+          "status": "success",
+          "error_details": null
+        },
+        {
+          "fold_number": 2,
+          "task_id": "task-002",
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0.0,
+          "mrr": 0.0,
+          "latency": 0.06616729195229709,
+          "memory_usage_mb": 820.625,
+          "status": "success",
+          "error_details": null
+        },
+        {
+          "fold_number": 3,
+          "task_id": "task-003",
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0.0,
+          "mrr": 0.0,
+          "latency": 0.0668457499705255,
+          "memory_usage_mb": 826.75,
+          "status": "success",
+          "error_details": null
+        },
+        {
+          "fold_number": 4,
+          "task_id": "task-004",
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0.0,
+          "mrr": 0.0,
+          "latency": 0.0463195419870317,
+          "memory_usage_mb": 827.109375,
+          "status": "success",
+          "error_details": null
+        },
+        {
+          "fold_number": 5,
+          "task_id": "task-005",
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0.0,
+          "mrr": 0.0,
+          "latency": 0.044031250057742,
+          "memory_usage_mb": 827.484375,
+          "status": "success",
+          "error_details": null
+        },
+        {
+          "fold_number": 6,
+          "task_id": "task-006",
+          "precision": 0.2,
+          "recall": 1.0,
+          "f1_score": 0.33333333333333337,
+          "mrr": 1.0,
+          "latency": 0.05780570791102946,
+          "memory_usage_mb": 832.640625,
+          "status": "success",
+          "error_details": null
+        },
+        {
+          "fold_number": 7,
+          "task_id": "task-007",
+          "precision": 0.2,
+          "recall": 1.0,
+          "f1_score": 0.33333333333333337,
+          "mrr": 1.0,
+          "latency": 0.047808040864765644,
+          "memory_usage_mb": 832.921875,
+          "status": "success",
+          "error_details": null
+        },
+        {
+          "fold_number": 8,
+          "task_id": "task-008",
+          "precision": 0.2,
+          "recall": 1.0,
+          "f1_score": 0.33333333333333337,
+          "mrr": 1.0,
+          "latency": 0.049601790960878134,
+          "memory_usage_mb": 833.203125,
+          "status": "success",
+          "error_details": null
+        },
+        {
+          "fold_number": 9,
+          "task_id": "task-009",
+          "precision": 0.2,
+          "recall": 1.0,
+          "f1_score": 0.33333333333333337,
+          "mrr": 0.5,
+          "latency": 0.04644379089586437,
+          "memory_usage_mb": 833.46875,
+          "status": "success",
+          "error_details": null
+        },
+        {
+          "fold_number": 10,
+          "task_id": "task-010",
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1_score": 0.0,
+          "mrr": 0.0,
+          "latency": 0.05789704201743007,
+          "memory_usage_mb": 833.953125,
+          "status": "success",
+          "error_details": null
+        }
+      ],
+      "summary": {
+        "precision": {
+          "mean": 0.12,
+          "std": 0.132664991614216
+        },
+        "recall": {
+          "mean": 0.5,
+          "std": 0.5
+        },
+        "f1_score": {
+          "mean": 0.19047619047619052,
+          "std": 0.2020305089104422
+        },
+        "mrr": {
+          "mean": 0.45,
+          "std": 0.47169905660283024
+        },
+        "latency": {
+          "mean": 0.053794241463765505,
+          "std": 0.007851716282707033
+        }
+      }
+    },
+    "paired_comparison": {
+      "tasks": [
+        {
+          "task_id": "task-001",
+          "lifecycle_stage": "bug_localization",
+          "condition_prompt_only": {
+            "retrieved_artifacts": [],
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "mrr": 0.0,
+            "latency": 1.125037670135498e-06,
+            "memory_usage_mb": 854.859375,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_a": {
+            "retrieved_artifacts": [
+              "source_code/src/main/java/org/springframework/samples/petclinic/owner/PetValidator.java",
+              "source_code/src/main/java/org/springframework/samples/petclinic/owner/PetValidator.java",
+              "source_code/src/main/java/org/springframework/samples/petclinic/owner/PetValidator.java",
+              "source_code/src/main/java/org/springframework/samples/petclinic/owner/PetValidator.java",
+              "source_code/src/main/java/org/springframework/samples/petclinic/owner/PetController.java"
+            ],
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1_score": 1.0,
+            "mrr": 1.0,
+            "latency": 0.04979991586878896,
+            "memory_usage_mb": 854.859375,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_memory_augmented": {
+            "retrieved_artifacts": [],
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "mrr": 0.0,
+            "latency": 3.341701813042164e-05,
+            "memory_usage_mb": 854.859375,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_b": {
+            "retrieved_artifacts": [
+              "src/main/java/org/springframework/samples/petclinic/owner/PetValidator.java",
+              "src/main/java/org/springframework/samples/petclinic/owner/PetController.java",
+              "src/test/java/org/springframework/samples/petclinic/owner/PetValidatorTests.java",
+              "src/test/java/org/springframework/samples/petclinic/owner/PetControllerTests.java",
+              "src/test/java/org/springframework/samples/petclinic/system/WelcomeControllerTests.java"
+            ],
+            "precision": 0.4,
+            "recall": 1.0,
+            "f1_score": 0.5714285714285715,
+            "mrr": 1.0,
+            "latency": 0.04725149995647371,
+            "memory_usage_mb": 854.859375,
+            "status": "success",
+            "error_details": null
+          },
+          "deltas": {
+            "precision": {
+              "absolute_diff": -0.6,
+              "percent_diff": -60.0
+            },
+            "recall": {
+              "absolute_diff": 0.0,
+              "percent_diff": 0.0
+            },
+            "f1_score": {
+              "absolute_diff": -0.4285714285714285,
+              "percent_diff": -42.85714285714285
+            },
+            "mrr": {
+              "absolute_diff": 0.0,
+              "percent_diff": 0.0
+            },
+            "latency": {
+              "absolute_diff": -0.0025484159123152494,
+              "percent_diff": -5.117309673835042
+            },
+            "memory_usage_mb": {
+              "absolute_diff": 0.0,
+              "percent_diff": 0.0
+            }
+          }
+        },
+        {
+          "task_id": "task-002",
+          "lifecycle_stage": "code_modification",
+          "condition_prompt_only": {
+            "retrieved_artifacts": [],
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "mrr": 0.0,
+            "latency": 1.1669471859931946e-06,
+            "memory_usage_mb": 854.859375,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_a": {
+            "retrieved_artifacts": [
+              "source_code/src/main/java/org/springframework/samples/petclinic/owner/PetController.java",
+              "source_code/src/main/java/org/springframework/samples/petclinic/owner/Owner.java",
+              "source_code/src/main/java/org/springframework/samples/petclinic/owner/PetController.java",
+              "source_code/src/main/java/org/springframework/samples/petclinic/owner/PetController.java",
+              "source_code/src/main/java/org/springframework/samples/petclinic/owner/PetController.java"
+            ],
+            "precision": 0.8,
+            "recall": 1.0,
+            "f1_score": 0.888888888888889,
+            "mrr": 1.0,
+            "latency": 0.2030958749819547,
+            "memory_usage_mb": 854.859375,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_memory_augmented": {
+            "retrieved_artifacts": [],
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "mrr": 0.0,
+            "latency": 4.058307968080044e-05,
+            "memory_usage_mb": 854.859375,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_b": {
+            "retrieved_artifacts": [],
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "mrr": 0.0,
+            "latency": 0.06658258405514061,
+            "memory_usage_mb": 854.859375,
+            "status": "success",
+            "error_details": null
+          },
+          "deltas": {
+            "precision": {
+              "absolute_diff": -0.8,
+              "percent_diff": -100.0
+            },
+            "recall": {
+              "absolute_diff": -1.0,
+              "percent_diff": -100.0
+            },
+            "f1_score": {
+              "absolute_diff": -0.888888888888889,
+              "percent_diff": -100.0
+            },
+            "mrr": {
+              "absolute_diff": -1.0,
+              "percent_diff": -100.0
+            },
+            "latency": {
+              "absolute_diff": -0.13651329092681408,
+              "percent_diff": -67.21618099773984
+            },
+            "memory_usage_mb": {
+              "absolute_diff": 0.0,
+              "percent_diff": 0.0
+            }
+          }
+        },
+        {
+          "task_id": "task-003",
+          "lifecycle_stage": "test_case_generation",
+          "condition_prompt_only": {
+            "retrieved_artifacts": [],
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "mrr": 0.0,
+            "latency": 4.5797787606716156e-07,
+            "memory_usage_mb": 854.859375,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_a": {
+            "retrieved_artifacts": [
+              "source_code/src/main/java/org/springframework/samples/petclinic/system/WelcomeController.java",
+              "tests/src/test/java/org/springframework/samples/petclinic/owner/VisitControllerTests.java",
+              "tests/src/test/java/org/springframework/samples/petclinic/owner/PetControllerTests.java",
+              "tests/src/test/java/org/springframework/samples/petclinic/owner/VisitControllerTests.java",
+              "tests/src/test/java/org/springframework/samples/petclinic/owner/VisitControllerTests.java"
+            ],
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "mrr": 0.0,
+            "latency": 0.18593158293515444,
+            "memory_usage_mb": 854.859375,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_memory_augmented": {
+            "retrieved_artifacts": [],
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "mrr": 0.0,
+            "latency": 4.366692155599594e-05,
+            "memory_usage_mb": 854.859375,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_b": {
+            "retrieved_artifacts": [],
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "mrr": 0.0,
+            "latency": 0.056825832929462194,
+            "memory_usage_mb": 857.375,
+            "status": "success",
+            "error_details": null
+          },
+          "deltas": {
+            "precision": {
+              "absolute_diff": 0.0,
+              "percent_diff": null
+            },
+            "recall": {
+              "absolute_diff": 0.0,
+              "percent_diff": null
+            },
+            "f1_score": {
+              "absolute_diff": 0.0,
+              "percent_diff": null
+            },
+            "mrr": {
+              "absolute_diff": 0.0,
+              "percent_diff": null
+            },
+            "latency": {
+              "absolute_diff": -0.12910575000569224,
+              "percent_diff": -69.43723490522812
+            },
+            "memory_usage_mb": {
+              "absolute_diff": 2.515625,
+              "percent_diff": 0.29427354645318127
+            }
+          }
+        },
+        {
+          "task_id": "task-004",
+          "lifecycle_stage": "bug_localization",
+          "condition_prompt_only": {
+            "retrieved_artifacts": [],
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "mrr": 0.0,
+            "latency": 6.2515027821064e-07,
+            "memory_usage_mb": 857.375,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_a": {
+            "retrieved_artifacts": [
+              "source_code/src/main/java/org/springframework/samples/petclinic/system/CrashController.java",
+              "documentation/README.md",
+              "source_code/src/main/java/org/springframework/samples/petclinic/system/CrashController.java",
+              "tests/src/test/java/org/springframework/samples/petclinic/service/ClinicServiceTests.java",
+              "tests/src/test/java/org/springframework/samples/petclinic/system/CrashControllerTests.java"
+            ],
+            "precision": 0.4,
+            "recall": 1.0,
+            "f1_score": 0.5714285714285715,
+            "mrr": 1.0,
+            "latency": 0.04357916605658829,
+            "memory_usage_mb": 857.375,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_memory_augmented": {
+            "retrieved_artifacts": [],
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "mrr": 0.0,
+            "latency": 3.108312375843525e-05,
+            "memory_usage_mb": 857.375,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_b": {
+            "retrieved_artifacts": [],
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "mrr": 0.0,
+            "latency": 0.0460491250269115,
+            "memory_usage_mb": 862.25,
+            "status": "success",
+            "error_details": null
+          },
+          "deltas": {
+            "precision": {
+              "absolute_diff": -0.4,
+              "percent_diff": -100.0
+            },
+            "recall": {
+              "absolute_diff": -1.0,
+              "percent_diff": -100.0
+            },
+            "f1_score": {
+              "absolute_diff": -0.5714285714285715,
+              "percent_diff": -100.0
+            },
+            "mrr": {
+              "absolute_diff": -1.0,
+              "percent_diff": -100.0
+            },
+            "latency": {
+              "absolute_diff": 0.002469958970323205,
+              "percent_diff": 5.667751803960455
+            },
+            "memory_usage_mb": {
+              "absolute_diff": 4.875,
+              "percent_diff": 0.5685960052485786
+            }
+          }
+        },
+        {
+          "task_id": "task-005",
+          "lifecycle_stage": "code_modification",
+          "condition_prompt_only": {
+            "retrieved_artifacts": [],
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "mrr": 0.0,
+            "latency": 5.841720849275589e-07,
+            "memory_usage_mb": 862.25,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_a": {
+            "retrieved_artifacts": [
+              "source_code/src/main/java/org/springframework/samples/petclinic/owner/OwnerController.java",
+              "source_code/src/main/java/org/springframework/samples/petclinic/owner/OwnerController.java",
+              "tests/src/test/java/org/springframework/samples/petclinic/model/ValidatorTests.java",
+              "source_code/src/main/java/org/springframework/samples/petclinic/owner/Owner.java",
+              "tests/src/test/java/org/springframework/samples/petclinic/model/ValidatorTests.java"
+            ],
+            "precision": 0.4,
+            "recall": 1.0,
+            "f1_score": 0.5714285714285715,
+            "mrr": 1.0,
+            "latency": 0.04929491598159075,
+            "memory_usage_mb": 862.25,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_memory_augmented": {
+            "retrieved_artifacts": [],
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "mrr": 0.0,
+            "latency": 3.2499898225069046e-05,
+            "memory_usage_mb": 862.25,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_b": {
+            "retrieved_artifacts": [],
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "mrr": 0.0,
+            "latency": 0.047008125111460686,
+            "memory_usage_mb": 862.25,
+            "status": "success",
+            "error_details": null
+          },
+          "deltas": {
+            "precision": {
+              "absolute_diff": -0.4,
+              "percent_diff": -100.0
+            },
+            "recall": {
+              "absolute_diff": -1.0,
+              "percent_diff": -100.0
+            },
+            "f1_score": {
+              "absolute_diff": -0.5714285714285715,
+              "percent_diff": -100.0
+            },
+            "mrr": {
+              "absolute_diff": -1.0,
+              "percent_diff": -100.0
+            },
+            "latency": {
+              "absolute_diff": -0.002286790870130062,
+              "percent_diff": -4.638999427413705
+            },
+            "memory_usage_mb": {
+              "absolute_diff": 0.0,
+              "percent_diff": 0.0
+            }
+          }
+        },
+        {
+          "task_id": "task-006",
+          "lifecycle_stage": "test_case_generation",
+          "condition_prompt_only": {
+            "retrieved_artifacts": [],
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "mrr": 0.0,
+            "latency": 6.2515027821064e-07,
+            "memory_usage_mb": 862.25,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_a": {
+            "retrieved_artifacts": [
+              "tests/src/test/java/org/springframework/samples/petclinic/vet/VetControllerTests.java",
+              "tests/src/test/java/org/springframework/samples/petclinic/vet/VetControllerTests.java",
+              "tests/src/test/java/org/springframework/samples/petclinic/service/ClinicServiceTests.java",
+              "tests/src/test/java/org/springframework/samples/petclinic/PetClinicIntegrationTests.java",
+              "tests/src/test/java/org/springframework/samples/petclinic/vet/VetControllerTests.java"
+            ],
+            "precision": 0.6,
+            "recall": 1.0,
+            "f1_score": 0.7499999999999999,
+            "mrr": 1.0,
+            "latency": 0.1667357909027487,
+            "memory_usage_mb": 867.203125,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_memory_augmented": {
+            "retrieved_artifacts": [],
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "mrr": 0.0,
+            "latency": 4.650000482797623e-05,
+            "memory_usage_mb": 867.203125,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_b": {
+            "retrieved_artifacts": [
+              "src/test/java/org/springframework/samples/petclinic/vet/VetControllerTests.java",
+              "src/main/java/org/springframework/samples/petclinic/vet/VetController.java",
+              "src/test/java/org/springframework/samples/petclinic/service/ClinicServiceTests.java",
+              "src/test/java/org/springframework/samples/petclinic/PetClinicIntegrationTests.java"
+            ],
+            "precision": 0.2,
+            "recall": 1.0,
+            "f1_score": 0.33333333333333337,
+            "mrr": 1.0,
+            "latency": 0.06728750001639128,
+            "memory_usage_mb": 867.203125,
+            "status": "success",
+            "error_details": null
+          },
+          "deltas": {
+            "precision": {
+              "absolute_diff": -0.39999999999999997,
+              "percent_diff": -66.66666666666666
+            },
+            "recall": {
+              "absolute_diff": 0.0,
+              "percent_diff": 0.0
+            },
+            "f1_score": {
+              "absolute_diff": -0.4166666666666665,
+              "percent_diff": -55.55555555555555
+            },
+            "mrr": {
+              "absolute_diff": 0.0,
+              "percent_diff": 0.0
+            },
+            "latency": {
+              "absolute_diff": -0.09944829088635743,
+              "percent_diff": -59.64423735775015
+            },
+            "memory_usage_mb": {
+              "absolute_diff": 0.0,
+              "percent_diff": 0.0
+            }
+          }
+        },
+        {
+          "task_id": "task-007",
+          "lifecycle_stage": "bug_localization",
+          "condition_prompt_only": {
+            "retrieved_artifacts": [],
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "mrr": 0.0,
+            "latency": 7.092021405696869e-07,
+            "memory_usage_mb": 867.203125,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_a": {
+            "retrieved_artifacts": [
+              "source_code/src/main/java/org/springframework/samples/petclinic/owner/PetTypeFormatter.java",
+              "source_code/src/main/java/org/springframework/samples/petclinic/owner/PetTypeFormatter.java",
+              "source_code/src/main/java/org/springframework/samples/petclinic/owner/PetTypeFormatter.java",
+              "source_code/src/main/java/org/springframework/samples/petclinic/PetClinicRuntimeHints.java",
+              "source_code/src/main/java/org/springframework/samples/petclinic/owner/PetTypeFormatter.java"
+            ],
+            "precision": 0.8,
+            "recall": 1.0,
+            "f1_score": 0.888888888888889,
+            "mrr": 1.0,
+            "latency": 0.05811362504027784,
+            "memory_usage_mb": 867.203125,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_memory_augmented": {
+            "retrieved_artifacts": [],
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "mrr": 0.0,
+            "latency": 3.595906309783459e-05,
+            "memory_usage_mb": 867.203125,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_b": {
+            "retrieved_artifacts": [
+              "src/main/java/org/springframework/samples/petclinic/owner/PetTypeFormatter.java",
+              "src/test/java/org/springframework/samples/petclinic/owner/PetTypeFormatterTests.java",
+              "src/main/java/org/springframework/samples/petclinic/PetClinicRuntimeHints.java"
+            ],
+            "precision": 0.2,
+            "recall": 1.0,
+            "f1_score": 0.33333333333333337,
+            "mrr": 1.0,
+            "latency": 0.044824291951954365,
+            "memory_usage_mb": 867.203125,
+            "status": "success",
+            "error_details": null
+          },
+          "deltas": {
+            "precision": {
+              "absolute_diff": -0.6000000000000001,
+              "percent_diff": -75.00000000000001
+            },
+            "recall": {
+              "absolute_diff": 0.0,
+              "percent_diff": 0.0
+            },
+            "f1_score": {
+              "absolute_diff": -0.5555555555555556,
+              "percent_diff": -62.5
+            },
+            "mrr": {
+              "absolute_diff": 0.0,
+              "percent_diff": 0.0
+            },
+            "latency": {
+              "absolute_diff": -0.013289333088323474,
+              "percent_diff": -22.86784395073066
+            },
+            "memory_usage_mb": {
+              "absolute_diff": 0.0,
+              "percent_diff": 0.0
+            }
+          }
+        },
+        {
+          "task_id": "task-008",
+          "lifecycle_stage": "code_modification",
+          "condition_prompt_only": {
+            "retrieved_artifacts": [],
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "mrr": 0.0,
+            "latency": 6.249174475669861e-07,
+            "memory_usage_mb": 867.203125,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_a": {
+            "retrieved_artifacts": [
+              "source_code/src/main/java/org/springframework/samples/petclinic/owner/Visit.java",
+              "source_code/src/main/java/org/springframework/samples/petclinic/owner/VisitController.java",
+              "source_code/src/main/java/org/springframework/samples/petclinic/owner/VisitController.java",
+              "source_code/src/main/java/org/springframework/samples/petclinic/owner/VisitController.java",
+              "source_code/src/main/java/org/springframework/samples/petclinic/owner/Visit.java"
+            ],
+            "precision": 0.6,
+            "recall": 1.0,
+            "f1_score": 0.7499999999999999,
+            "mrr": 0.5,
+            "latency": 0.04213304189033806,
+            "memory_usage_mb": 867.203125,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_memory_augmented": {
+            "retrieved_artifacts": [],
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "mrr": 0.0,
+            "latency": 4.4625019654631615e-05,
+            "memory_usage_mb": 867.203125,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_b": {
+            "retrieved_artifacts": [
+              "src/main/java/org/springframework/samples/petclinic/owner/VisitController.java",
+              "src/test/java/org/springframework/samples/petclinic/owner/VisitControllerTests.java",
+              "src/main/java/org/springframework/samples/petclinic/owner/Visit.java"
+            ],
+            "precision": 0.2,
+            "recall": 1.0,
+            "f1_score": 0.33333333333333337,
+            "mrr": 1.0,
+            "latency": 0.043597790878266096,
+            "memory_usage_mb": 867.203125,
+            "status": "success",
+            "error_details": null
+          },
+          "deltas": {
+            "precision": {
+              "absolute_diff": -0.39999999999999997,
+              "percent_diff": -66.66666666666666
+            },
+            "recall": {
+              "absolute_diff": 0.0,
+              "percent_diff": 0.0
+            },
+            "f1_score": {
+              "absolute_diff": -0.4166666666666665,
+              "percent_diff": -55.55555555555555
+            },
+            "mrr": {
+              "absolute_diff": 0.5,
+              "percent_diff": 100.0
+            },
+            "latency": {
+              "absolute_diff": 0.0014647489879280329,
+              "percent_diff": 3.476485252929076
+            },
+            "memory_usage_mb": {
+              "absolute_diff": 0.0,
+              "percent_diff": 0.0
+            }
+          }
+        },
+        {
+          "task_id": "task-009",
+          "lifecycle_stage": "test_case_generation",
+          "condition_prompt_only": {
+            "retrieved_artifacts": [],
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "mrr": 0.0,
+            "latency": 5.41098415851593e-07,
+            "memory_usage_mb": 867.203125,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_a": {
+            "retrieved_artifacts": [
+              "source_code/src/main/java/org/springframework/samples/petclinic/owner/PetValidator.java",
+              "source_code/src/main/java/org/springframework/samples/petclinic/owner/PetValidator.java",
+              "source_code/src/main/java/org/springframework/samples/petclinic/owner/PetValidator.java",
+              "source_code/src/main/java/org/springframework/samples/petclinic/owner/PetValidator.java",
+              "tests/src/test/java/org/springframework/samples/petclinic/owner/PetValidatorTests.java"
+            ],
+            "precision": 0.2,
+            "recall": 1.0,
+            "f1_score": 0.33333333333333337,
+            "mrr": 0.2,
+            "latency": 0.045195332961156964,
+            "memory_usage_mb": 867.203125,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_memory_augmented": {
+            "retrieved_artifacts": [],
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "mrr": 0.0,
+            "latency": 5.250005051493645e-05,
+            "memory_usage_mb": 867.203125,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_b": {
+            "retrieved_artifacts": [
+              "src/main/java/org/springframework/samples/petclinic/owner/PetValidator.java",
+              "src/test/java/org/springframework/samples/petclinic/owner/PetValidatorTests.java",
+              "src/test/java/org/springframework/samples/petclinic/system/WelcomeControllerTests.java",
+              "src/main/java/org/springframework/samples/petclinic/system/WelcomeController.java"
+            ],
+            "precision": 0.2,
+            "recall": 1.0,
+            "f1_score": 0.33333333333333337,
+            "mrr": 0.5,
+            "latency": 0.04720420902594924,
+            "memory_usage_mb": 867.203125,
+            "status": "success",
+            "error_details": null
+          },
+          "deltas": {
+            "precision": {
+              "absolute_diff": 0.0,
+              "percent_diff": 0.0
+            },
+            "recall": {
+              "absolute_diff": 0.0,
+              "percent_diff": 0.0
+            },
+            "f1_score": {
+              "absolute_diff": 0.0,
+              "percent_diff": 0.0
+            },
+            "mrr": {
+              "absolute_diff": 0.3,
+              "percent_diff": 149.99999999999997
+            },
+            "latency": {
+              "absolute_diff": 0.0020088760647922754,
+              "percent_diff": 4.444875019548588
+            },
+            "memory_usage_mb": {
+              "absolute_diff": 0.0,
+              "percent_diff": 0.0
+            }
+          }
+        },
+        {
+          "task_id": "task-010",
+          "lifecycle_stage": "bug_localization",
+          "condition_prompt_only": {
+            "retrieved_artifacts": [],
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "mrr": 0.0,
+            "latency": 5.83939254283905e-07,
+            "memory_usage_mb": 867.203125,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_a": {
+            "retrieved_artifacts": [
+              "source_code/src/main/java/org/springframework/samples/petclinic/vet/Specialty.java",
+              "source_code/src/main/java/org/springframework/samples/petclinic/vet/Specialty.java",
+              "source_code/src/main/java/org/springframework/samples/petclinic/vet/Vet.java",
+              "source_code/src/main/java/org/springframework/samples/petclinic/vet/Vets.java",
+              "source_code/src/main/java/org/springframework/samples/petclinic/vet/Vet.java"
+            ],
+            "precision": 0.4,
+            "recall": 1.0,
+            "f1_score": 0.5714285714285715,
+            "mrr": 0.3333333333333333,
+            "latency": 0.1639312079641968,
+            "memory_usage_mb": 869.984375,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_memory_augmented": {
+            "retrieved_artifacts": [],
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "mrr": 0.0,
+            "latency": 5.1666051149368286e-05,
+            "memory_usage_mb": 869.984375,
+            "status": "success",
+            "error_details": null
+          },
+          "condition_b": {
+            "retrieved_artifacts": [],
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1_score": 0.0,
+            "mrr": 0.0,
+            "latency": 0.05495645897462964,
+            "memory_usage_mb": 869.984375,
+            "status": "success",
+            "error_details": null
+          },
+          "deltas": {
+            "precision": {
+              "absolute_diff": -0.4,
+              "percent_diff": -100.0
+            },
+            "recall": {
+              "absolute_diff": -1.0,
+              "percent_diff": -100.0
+            },
+            "f1_score": {
+              "absolute_diff": -0.5714285714285715,
+              "percent_diff": -100.0
+            },
+            "mrr": {
+              "absolute_diff": -0.3333333333333333,
+              "percent_diff": -100.0
+            },
+            "latency": {
+              "absolute_diff": -0.10897474898956716,
+              "percent_diff": -66.47590189987966
+            },
+            "memory_usage_mb": {
+              "absolute_diff": 0.0,
+              "percent_diff": 0.0
+            }
+          }
+        }
+      ],
+      "summary": {
+        "precision": {
+          "condition_prompt_only": {
+            "mean": 0.0,
+            "std": 0.0
+          },
+          "condition_a": {
+            "mean": 0.52,
+            "std": 0.28565713714171403
+          },
+          "condition_memory_augmented": {
+            "mean": 0.0,
+            "std": 0.0
+          },
+          "condition_b": {
+            "mean": 0.12,
+            "std": 0.132664991614216
+          },
+          "absolute_diff": {
+            "mean": -0.39999999999999997,
+            "std": 0.23664319132398465
+          },
+          "percent_diff": {
+            "mean": -74.25925925925927,
+            "std": 30.702787816389193
+          }
+        },
+        "recall": {
+          "condition_prompt_only": {
+            "mean": 0.0,
+            "std": 0.0
+          },
+          "condition_a": {
+            "mean": 0.9,
+            "std": 0.30000000000000004
+          },
+          "condition_memory_augmented": {
+            "mean": 0.0,
+            "std": 0.0
+          },
+          "condition_b": {
+            "mean": 0.5,
+            "std": 0.5
+          },
+          "absolute_diff": {
+            "mean": -0.4,
+            "std": 0.4898979485566356
+          },
+          "percent_diff": {
+            "mean": -44.44444444444444,
+            "std": 49.69039949999532
+          }
+        },
+        "f1_score": {
+          "condition_prompt_only": {
+            "mean": 0.0,
+            "std": 0.0
+          },
+          "condition_a": {
+            "mean": 0.6325396825396825,
+            "std": 0.28193711383073145
+          },
+          "condition_memory_augmented": {
+            "mean": 0.0,
+            "std": 0.0
+          },
+          "condition_b": {
+            "mean": 0.19047619047619052,
+            "std": 0.2020305089104422
+          },
+          "absolute_diff": {
+            "mean": -0.442063492063492,
+            "std": 0.2559397683615709
+          },
+          "percent_diff": {
+            "mean": -68.49647266313933,
+            "std": 32.8124693344545
+          }
+        },
+        "mrr": {
+          "condition_prompt_only": {
+            "mean": 0.0,
+            "std": 0.0
+          },
+          "condition_a": {
+            "mean": 0.7033333333333334,
+            "std": 0.3813572253587617
+          },
+          "condition_memory_augmented": {
+            "mean": 0.0,
+            "std": 0.0
+          },
+          "condition_b": {
+            "mean": 0.45,
+            "std": 0.47169905660283024
+          },
+          "absolute_diff": {
+            "mean": -0.25333333333333335,
+            "std": 0.5300314456080255
+          },
+          "percent_diff": {
+            "mean": -16.66666666666667,
+            "std": 88.19171036881968
+          }
+        },
+        "latency": {
+          "condition_prompt_only": {
+            "mean": 7.043592631816864e-07,
+            "std": 2.2937835972147708e-07
+          },
+          "condition_a": {
+            "mean": 0.10078104545827955,
+            "std": 0.06552002020410926
+          },
+          "condition_memory_augmented": {
+            "mean": 4.125002305954695e-05,
+            "std": 7.4133435834801695e-06
+          },
+          "condition_b": {
+            "mean": 0.05215874179266393,
+            "std": 0.008403000855261317
+          },
+          "absolute_diff": {
+            "mean": -0.04862230366561562,
+            "std": 0.057990481636454184
+          },
+          "percent_diff": {
+            "mean": -28.180859613613904,
+            "std": 31.637048553993846
+          }
+        },
+        "memory_usage_mb": {
+          "condition_prompt_only": {
+            "mean": 861.5265625,
+            "std": 5.296506486074689
+          },
+          "condition_a": {
+            "mean": 862.3,
+            "std": 5.878426527354067
+          },
+          "condition_memory_augmented": {
+            "mean": 862.3,
+            "std": 5.878426527354067
+          },
+          "condition_b": {
+            "mean": 863.0390625,
+            "std": 5.336070185026735
+          },
+          "absolute_diff": {
+            "mean": 0.7390625,
+            "std": 1.569454056401859
+          },
+          "percent_diff": {
+            "mean": 0.08628695517017598,
+            "std": 0.18315129019512108
+          }
+        }
+      }
+    },
+    "fault_injection_diagnostics": [
+      {
+        "diagnostic_test_id": "FLT-001",
+        "task_id": "task-001",
+        "strategy": "lifecycle",
+        "input_condition": "A retrieved entry node (versions/51045d16/source_code/src/main/java/org/springframework/samples/petclinic/owner/PetValidator.java) is isolated in the knowledge graph with zero edges linking to it.",
+        "expected_behavior": "Bypasses neighbor expansion gracefully, returns the isolated node if it is selected as an entry point, and records 0 traversal depth/visited count.",
+        "observed_behavior": "A retrieved entry node (versions/51045d16/source_code/src/main/java/org/springframework/samples/petclinic/owner/PetValidator.java) was successfully isolated. Traversal depth: 0, nodes visited: 1.",
+        "result": {
+          "retrieved_artifacts": [
+            "src/main/java/org/springframework/samples/petclinic/owner/PetValidator.java"
+          ],
+          "exception_type": null,
+          "exception_message": null,
+          "execution_time_seconds": 0.00022512488067150116,
+          "similarity_threshold": 0.2329522344054458,
+          "semantic_similarity_values": [
+            0.5958256125450134
+          ],
+          "candidate_counts": 4,
+          "entry_node_counts": 4,
+          "traversal_depth": 0,
+          "graph_nodes_visited": 1
+        },
+        "pass_fail_status": "pass"
+      },
+      {
+        "diagnostic_test_id": "FLT-002",
+        "task_id": "task-001",
+        "strategy": "rag",
+        "input_condition": "Search results are mocked as empty, returning zero entry points.",
+        "expected_behavior": "Gracefully completes context construction returning an empty context block with zero retrieved files.",
+        "observed_behavior": "Completed successfully returning an empty list of retrieved files. Length of context: 0.",
+        "result": {
+          "retrieved_artifacts": [],
+          "exception_type": null,
+          "exception_message": null,
+          "execution_time_seconds": 0.00017258292064070702,
+          "similarity_threshold": 0.2329522344054458,
+          "semantic_similarity_values": [
+            0.0
+          ],
+          "candidate_counts": 0,
+          "entry_node_counts": 0,
+          "traversal_depth": 0,
+          "graph_nodes_visited": 0
+        },
+        "pass_fail_status": "pass"
+      },
+      {
+        "diagnostic_test_id": "FLT-002",
+        "task_id": "task-001",
+        "strategy": "lifecycle",
+        "input_condition": "Search results are mocked as empty, returning zero entry points.",
+        "expected_behavior": "Gracefully completes context construction returning an empty context block with zero retrieved files.",
+        "observed_behavior": "Completed successfully returning an empty list of retrieved files. Length of context: 114.",
+        "result": {
+          "retrieved_artifacts": [],
+          "exception_type": null,
+          "exception_message": null,
+          "execution_time_seconds": 0.0001900000497698784,
+          "similarity_threshold": 0.2329522344054458,
+          "semantic_similarity_values": [
+            0.0
+          ],
+          "candidate_counts": 0,
+          "entry_node_counts": 0,
+          "traversal_depth": 0,
+          "graph_nodes_visited": 0
+        },
+        "pass_fail_status": "pass"
+      },
+      {
+        "diagnostic_test_id": "FLT-003",
+        "task_id": "task-001",
+        "strategy": "lifecycle",
+        "input_condition": "Candidates injected at threshold \u00b1 \u03b5 boundary (threshold=0.23295, \u03b5=0.00010).",
+        "expected_behavior": "Only the candidate exceeding the dynamic threshold is selected as an entry point; the candidate below is filtered.",
+        "observed_behavior": "Candidate A score=0.23305 (threshold=0.23295) was accepted. Candidate B score=0.23285 was rejected. Entry nodes count: 1.",
+        "result": {
+          "retrieved_artifacts": [],
+          "exception_type": null,
+          "exception_message": null,
+          "execution_time_seconds": 0.0002196251880377531,
+          "similarity_threshold": 0.2329522344054458,
+          "semantic_similarity_values": [
+            0.23305223440544579,
+            0.2328522344054458
+          ],
+          "candidate_counts": 2,
+          "entry_node_counts": 1,
+          "traversal_depth": 0,
+          "graph_nodes_visited": 0
+        },
+        "pass_fail_status": "pass"
+      },
+      {
+        "diagnostic_test_id": "FLT-004",
+        "task_id": "task-001",
+        "strategy": "rag",
+        "input_condition": "Task description query is empty string.",
+        "expected_behavior": "Gracefully executes context construction yielding empty retrieved files.",
+        "observed_behavior": "Empty description query processed successfully without exception.",
+        "result": {
+          "retrieved_artifacts": [
+            "documentation/src/main/resources/banner.txt",
+            "documentation/LICENSE.txt",
+            "source_code/src/main/java/org/springframework/samples/petclinic/PetClinicRuntimeHints.java",
+            "source_code/src/main/java/org/springframework/samples/petclinic/owner/PetTypeRepository.java",
+            "source_code/src/main/java/org/springframework/samples/petclinic/owner/Visit.java"
+          ],
+          "exception_type": null,
+          "exception_message": null,
+          "execution_time_seconds": 0.14962341589853168,
+          "similarity_threshold": 0.2329522344054458,
+          "semantic_similarity_values": [
+            0.22526024281978607
+          ],
+          "candidate_counts": 5,
+          "entry_node_counts": 5,
+          "traversal_depth": 0,
+          "graph_nodes_visited": 0
+        },
+        "pass_fail_status": "pass"
+      },
+      {
+        "diagnostic_test_id": "FLT-004",
+        "task_id": "task-001",
+        "strategy": "rag",
+        "input_condition": "Task target_files key is missing from input task dictionary.",
+        "expected_behavior": "Retrieval executes successfully, but retrieval-quality metrics cannot be computed because ground truth is unavailable.",
+        "observed_behavior": "Retrieval executed successfully, but retrieval-quality metrics cannot be computed because ground truth is unavailable.",
+        "result": {
+          "retrieved_artifacts": [
+            "source_code/src/main/java/org/springframework/samples/petclinic/owner/PetValidator.java",
+            "source_code/src/main/java/org/springframework/samples/petclinic/owner/PetValidator.java",
+            "source_code/src/main/java/org/springframework/samples/petclinic/owner/PetValidator.java",
+            "source_code/src/main/java/org/springframework/samples/petclinic/owner/PetValidator.java",
+            "source_code/src/main/java/org/springframework/samples/petclinic/owner/PetController.java"
+          ],
+          "exception_type": null,
+          "exception_message": null,
+          "execution_time_seconds": 0.055503916926681995,
+          "similarity_threshold": 0.2329522344054458,
+          "semantic_similarity_values": [
+            0.5958256125450134
+          ],
+          "candidate_counts": 5,
+          "entry_node_counts": 5,
+          "traversal_depth": 0,
+          "graph_nodes_visited": 0
+        },
+        "pass_fail_status": "pass"
+      },
+      {
+        "diagnostic_test_id": "FLT-004",
+        "task_id": "task-001",
+        "strategy": "lifecycle",
+        "input_condition": "Task description query is empty string.",
+        "expected_behavior": "Gracefully executes context construction yielding empty retrieved files.",
+        "observed_behavior": "Empty description query processed successfully without exception.",
+        "result": {
+          "retrieved_artifacts": [],
+          "exception_type": null,
+          "exception_message": null,
+          "execution_time_seconds": 0.1592334578745067,
+          "similarity_threshold": 0.2329522344054458,
+          "semantic_similarity_values": [
+            0.22526024281978607
+          ],
+          "candidate_counts": 5,
+          "entry_node_counts": 0,
+          "traversal_depth": 0,
+          "graph_nodes_visited": 0
+        },
+        "pass_fail_status": "pass"
+      },
+      {
+        "diagnostic_test_id": "FLT-004",
+        "task_id": "task-001",
+        "strategy": "lifecycle",
+        "input_condition": "Task target_files key is missing from input task dictionary.",
+        "expected_behavior": "Retrieval executes successfully, but retrieval-quality metrics cannot be computed because ground truth is unavailable.",
+        "observed_behavior": "Retrieval executed successfully, but retrieval-quality metrics cannot be computed because ground truth is unavailable.",
+        "result": {
+          "retrieved_artifacts": [
+            "src/main/java/org/springframework/samples/petclinic/owner/PetValidator.java",
+            "src/main/java/org/springframework/samples/petclinic/owner/PetController.java",
+            "src/test/java/org/springframework/samples/petclinic/owner/PetValidatorTests.java",
+            "src/test/java/org/springframework/samples/petclinic/owner/PetControllerTests.java",
+            "src/test/java/org/springframework/samples/petclinic/system/WelcomeControllerTests.java"
+          ],
+          "exception_type": null,
+          "exception_message": null,
+          "execution_time_seconds": 0.052742332918569446,
+          "similarity_threshold": 0.2329522344054458,
+          "semantic_similarity_values": [
+            0.5958256125450134
+          ],
+          "candidate_counts": 5,
+          "entry_node_counts": 5,
+          "traversal_depth": 3,
+          "graph_nodes_visited": 6
+        },
+        "pass_fail_status": "pass"
+      },
+      {
+        "diagnostic_test_id": "FLT-005",
+        "task_id": "task-001",
+        "strategy": "rag",
+        "input_condition": "Downstream model/embedding call raises transient outage exception (503).",
+        "expected_behavior": "Propagates failure gracefully, capturing details when retries are not supported in the pipeline wrapper.",
+        "observed_behavior": "Strategy successfully caught and propagated exception. Exception: ValueError (Simulated transient connection timeout/outage (503)).",
+        "result": {
+          "retrieved_artifacts": [],
+          "exception_type": "ValueError",
+          "exception_message": "Simulated transient connection timeout/outage (503)",
+          "execution_time_seconds": 0.00019541708752512932
+        },
+        "pass_fail_status": "pass"
+      },
+      {
+        "diagnostic_test_id": "FLT-005",
+        "task_id": "task-001",
+        "strategy": "lifecycle",
+        "input_condition": "Downstream model/embedding call raises transient outage exception (503).",
+        "expected_behavior": "Propagates failure gracefully, capturing details when retries are not supported in the pipeline wrapper.",
+        "observed_behavior": "Strategy successfully caught and propagated exception. Exception: ValueError (Simulated transient connection timeout/outage (503)).",
+        "result": {
+          "retrieved_artifacts": [],
+          "exception_type": "ValueError",
+          "exception_message": "Simulated transient connection timeout/outage (503)",
+          "execution_time_seconds": 0.00016245804727077484
+        },
+        "pass_fail_status": "pass"
+      }
+    ]
+  },
+  "observed_errors": []
+}

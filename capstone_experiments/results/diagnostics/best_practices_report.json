@@ -1,0 +1,117 @@
+{
+  "reliability_improvements": [
+    {
+      "improvement_id": "IMP-001",
+      "title": "Improved Diagnostic Observability & State Isolation",
+      "description": "In-memory tracking of detailed search and traversal metrics (such as maximum similarity scores, candidate counts, and entry node filters) with isolated state management between query execution cycles.",
+      "motivation": "Intermediate decision parameters (such as whether candidate nodes were discarded by similarity filters) were not tracked, preventing diagnostic insights into F1 changes. Stale retrieval lists could also pollute subsequent queries if not isolated.",
+      "implementation_summary": "Added the `self.last_diagnostics` dict to `BaseContextStrategy` and populated it at retrieval time. Explicitly reset `self.last_retrieved_files` and the diagnostics state at the start of every `construct_context()` call to prevent stale-state leakage between tasks.",
+      "supporting_evidence": "Defined in `src/strategies/base_strategy.py:L11-L12` and initialized/reset in `construct_context()` lines L27, L40, and L133.",
+      "expected_benefit": "Prevents cross-task state leakage and provides detailed execution traces to inspect intermediate retrieval behavior.",
+      "remaining_limitations": "Only records the last run's metrics in-memory; metrics must be persisted immediately after invocation by the runner."
+    },
+    {
+      "improvement_id": "IMP-002",
+      "title": "Structured Exception Reporting and Failure Isolation",
+      "description": "Clear propagation and recording of execution exceptions, allowing independent test executions and partial-result persistence.",
+      "motivation": "Pipeline errors or API service interruptions could crash the entire execution run, leading to total data loss and zero log outputs for successful tasks.",
+      "implementation_summary": "Configured the runner's exception block to serialize partial results (including any recorded task metrics) to disk immediately upon failure. Furthermore, wrapped individual fault tests (`FLT-001` through `FLT-005`) so that a single test failure does not abort the rest of the diagnostic suite. The retrieval pipeline does not automatically recover from transient outages. The implemented improvement is that exceptions are propagated clearly, recorded by the diagnostic runner, and prevented from silently corrupting results.",
+      "supporting_evidence": "Implemented in `run_diagnostics.py` under `--mode fault` at lines L241-L270.",
+      "expected_benefit": "Assures that a failure in one task or test fold does not prevent the collection of diagnostic records for other tasks.",
+      "remaining_limitations": "The retrieval wrapper itself does not retry the failed operations automatically."
+    },
+    {
+      "improvement_id": "IMP-003",
+      "title": "Reconstructible Configuration & Artifact Tracking",
+      "description": "Generation of timestamped output artifacts coupled with dynamic configuration snapshots.",
+      "motivation": "Parameter updates (like changing similarity thresholds or weights) make it difficult to trace which files correspond to which settings, risking state confusion.",
+      "implementation_summary": "Configured the runner to output to a timestamped file name (`diagnostics_run_%Y%m%d_%H%M%S.json`) and serialized the entire `ExperimentConfig` structure inside the JSON payload's metadata under `"config_snapshot"`. Also recorded the path to the active configuration file.",
+      "supporting_evidence": "Implemented in `run_diagnostics.py` metadata serialization at lines L60-L77.",
+      "expected_benefit": "Improves reproducibility and supports reconstruction of the experimental configuration.",
+      "remaining_limitations": "Does not prevent manual deletion or overwriting of config files on disk prior to run launch."
+    },
+    {
+      "improvement_id": "IMP-004",
+      "title": "Automated Diagnostic Validation Checks",
+      "description": "In-runner assertion checks that evaluate output consistency and integrity during task loops.",
+      "motivation": "Quiet data omissions (such as evaluating fewer tasks than expected or duplicating task IDs) could lead to invalid reported averages.",
+      "implementation_summary": "Integrated automated assertions in `run_diagnostics.py` that check for fold coverage, duplicate task evaluations, and completeness of metrics.",
+      "supporting_evidence": "Implemented in `run_diagnostics.py` validation block at lines L182-L200.",
+      "expected_benefit": "Flags execution configuration errors immediately upon pipeline completion.",
+      "remaining_limitations": "Validation checks only execute at the end of the run rather than preventing execution during initialization."
+    }
+  ],
+  "engineering_best_practices": [
+    {
+      "practice_name": "Reuse of Existing Evaluation Functions",
+      "description": "Imported `clean_file_path` and `calculate_metrics` directly from `run_pilot.py` to calculate precision, recall, f1, and mrr metrics, avoiding duplication of metric formulas.",
+      "traceable_evidence": "Imported on lines L18-20 in `run_diagnostics.py`."
+    },
+    {
+      "practice_name": "Preservation of Existing Retrieval Pipelines",
+      "description": "Constructed contexts using the strategy wrappers (`RAGStrategy` and `LifecycleGuidedContextStrategy`) via `construct_context()` rather than querying the index or graph independently, guaranteeing experimental consistency.",
+      "traceable_evidence": "Executed on lines L116, L173, and L179 in `run_diagnostics.py`."
+    },
+    {
+      "practice_name": "Separation of Observations from Hypotheses",
+      "description": "Delineated clearly between observed metric values and hypothesized root causes (like the impact of similarity thresholds) in the classification schema.",
+      "traceable_evidence": "Implemented in the structure of `error_classification.json`."
+    },
+    {
+      "practice_name": "Dynamic Configuration Loading",
+      "description": "Loaded configuration dynamically via path strings using environment variable snapshots to avoid hardcoding parameters.",
+      "traceable_evidence": "Implemented at lines L48-51 in `src/strategies/base_strategy.py`."
+    }
+  ],
+  "remaining_limitations": {
+    "confirmed_limitations": [
+      {
+        "limitation_id": "LIM-001",
+        "description": "The retrieval pipeline lacks built-in retry logic to recover from downstream outage exceptions.",
+        "evidence": "Verified in FLT-005 where ValueError was propagated directly to the runner."
+      },
+      {
+        "limitation_id": "LIM-002",
+        "description": "Cumulative RSS peak memory tracking from getrusage reports process-level allocations rather than strategy-isolated footprint.",
+        "evidence": "Observed in Step 1E where RAG (793.96 MB) and Lifecycle (794.50 MB) had a delta of only 0.54 MB."
+      },
+      {
+        "limitation_id": "LIM-003",
+        "description": "Evaluated configuration parameters are tested on tasks that may have contributed to Week 4 optimization, violating full test-set independence.",
+        "evidence": "The 10-task evaluation JSON file has been shared across optimization runs."
+      }
+    ],
+    "future_work_hypotheses": [
+      {
+        "hypothesis_id": "HYP-001",
+        "description": "F1 score decrease from 0.633 to 0.190 is caused by similarity threshold filtering in Lifecycle strategy rejecting valid entry-point nodes.",
+        "proposed_validation": "Collect maximum semantic similarity and entry point counts on all 10 tasks to verify how many are filtered."
+      },
+      {
+        "hypothesis_id": "HYP-002",
+        "description": "Lower average latency in Lifecycle strategy is associated with early traversal termination when entry points are empty.",
+        "proposed_validation": "Correlate graph visited counts and traversal depth with task-level duration scores."
+      }
+    ]
+  },
+  "future_recommendations": [
+    {
+      "recommendation_id": "REC-001",
+      "description": "Optimize similarity threshold values across the 10-task evaluation to recover metric degradation.",
+      "classification": "configuration tuning",
+      "supporting_diagnostics": "CAT-001 (F1 degradation on 9 out of 10 tasks)."
+    },
+    {
+      "recommendation_id": "REC-002",
+      "description": "Implement exponential retry loops with backoff to recover from transient 503 outage exceptions.",
+      "classification": "code enhancement",
+      "supporting_diagnostics": "CAT-002 (FLT-005 failure propagation)."
+    },
+    {
+      "recommendation_id": "REC-003",
+      "description": "Integrate heap memory profiler (such as tracemalloc) to track object allocations inside strategy constructors.",
+      "classification": "additional experimentation",
+      "supporting_diagnostics": "CAT-004 (Cumulative RSS measurement limitation)."
+    }
+  ]
+}

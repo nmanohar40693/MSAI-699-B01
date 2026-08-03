@@ -1,0 +1,166 @@
+{
+  "error_categories": [
+    {
+      "category_id": "CAT-001",
+      "category_name": "Retrieval Quality Reduction",
+      "description": "Retrieval quality metrics (Precision, Recall, F1, MRR) decrease compared to the baseline Standard RAG configuration when running the Lifecycle-Guided strategy.",
+      "observed_behavior": "Under the Lifecycle-Guided strategy, context construction failed to retrieve any ground-truth target files for 8 out of 10 tasks, leading to zero F1-scores on those tasks.",
+      "affected_strategy": "lifecycle",
+      "severity": "critical",
+      "recoverability": "recoverable",
+      "occurrence_frequency": "Observed in 9 out of 10 tasks in the paired comparison evaluation.",
+      "root_cause_status": "hypothesized_root_cause",
+      "supporting_evidence": [
+        {
+          "step": "Step 1E",
+          "task_id": "task-002",
+          "diagnostic_test_id": null,
+          "metrics": {
+            "condition_a_f1": 0.8889,
+            "condition_b_f1": 0.0
+          },
+          "observation": "Entry nodes list was empty, indicating all candidate nodes fell below the similarity threshold."
+        },
+        {
+          "step": "Step 1E",
+          "task_id": "task-004",
+          "diagnostic_test_id": null,
+          "metrics": {
+            "condition_a_f1": 0.5714,
+            "condition_b_f1": 0.0
+          },
+          "observation": "Top candidates were rejected by the similarity threshold filtering step."
+        },
+        {
+          "step": "Step 1E",
+          "task_id": "task-005",
+          "diagnostic_test_id": null,
+          "metrics": {
+            "condition_a_f1": 0.5714,
+            "condition_b_f1": 0.0
+          },
+          "observation": "No entry nodes passed the similarity threshold filter."
+        },
+        {
+          "step": "Step 1E",
+          "task_id": "task-007",
+          "diagnostic_test_id": null,
+          "metrics": {
+            "condition_a_f1": 0.8889,
+            "condition_b_f1": 0.0
+          },
+          "observation": "All semantic matches filtered out before graph traversal."
+        },
+        {
+          "step": "Step 1E",
+          "task_id": "task-008",
+          "diagnostic_test_id": null,
+          "metrics": {
+            "condition_a_f1": 0.75,
+            "condition_b_f1": 0.0
+          },
+          "observation": "No valid entry points selected due to threshold filter."
+        },
+        {
+          "step": "Step 1E",
+          "task_id": "task-009",
+          "diagnostic_test_id": null,
+          "metrics": {
+            "condition_a_f1": 0.3333,
+            "condition_b_f1": 0.0
+          },
+          "observation": "All search matches filtered out."
+        },
+        {
+          "step": "Step 1E",
+          "task_id": "task-010",
+          "diagnostic_test_id": null,
+          "metrics": {
+            "condition_a_f1": 0.5714,
+            "condition_b_f1": 0.0
+          },
+          "observation": "No entry nodes selected."
+        },
+        {
+          "step": "Step 1F",
+          "task_id": "task-001",
+          "diagnostic_test_id": "FLT-003",
+          "metrics": {
+            "entry_nodes_after_filtering": 1
+          },
+          "observation": "Verified that candidate B (similarity below threshold) was rejected, while candidate A (similarity above threshold) was accepted."
+        }
+      ],
+      "recommended_action": "configuration tuning"
+    },
+    {
+      "category_id": "CAT-002",
+      "category_name": "Transient API Outage Vulnerability",
+      "description": "Downstream or network-based service requests (such as embedding index queries or LLM requests) immediately propagate errors, causing execution failure when outages occur.",
+      "observed_behavior": "Simulating a transient exception (503) on strategy search immediately raised a ValueError and terminated the context construction pipeline.",
+      "affected_strategy": "rag and lifecycle",
+      "severity": "high",
+      "recoverability": "recoverable",
+      "occurrence_frequency": "Observed under simulated network fault conditions.",
+      "root_cause_status": "confirmed_root_cause",
+      "supporting_evidence": [
+        {
+          "step": "Step 1F",
+          "task_id": "task-001",
+          "diagnostic_test_id": "FLT-005",
+          "metrics": {
+            "rag_status": "fail",
+            "lifecycle_status": "fail"
+          },
+          "observation": "Verified that strategy search propagates ValueError when the downstream API call encounters a transient exception."
+        }
+      ],
+      "recommended_action": "code modification"
+    },
+    {
+      "category_id": "CAT-003",
+      "category_name": "Ground Truth Dependency",
+      "description": "Evaluation metrics cannot be calculated if target_files ground truth metadata is missing from the task.",
+      "observed_behavior": "The diagnostics runner successfully completed retrieval for tasks missing target files, but recorded metrics as unavailable.",
+      "affected_strategy": "rag and lifecycle",
+      "severity": "low",
+      "recoverability": "handled",
+      "occurrence_frequency": "Observed under simulated input modifications.",
+      "root_cause_status": "confirmed_root_cause",
+      "supporting_evidence": [
+        {
+          "step": "Step 1F",
+          "task_id": "task-001",
+          "diagnostic_test_id": "FLT-004",
+          "metrics": {},
+          "observation": "Removing target_files from task definition allowed retrieval to execute, but prevented metrics from being computed."
+        }
+      ],
+      "recommended_action": "no action required"
+    },
+    {
+      "category_id": "CAT-004",
+      "category_name": "Cumulative Memory RSS Measurement Limitation",
+      "description": "Process-level resource.getrusage() peak resident set size (ru_maxrss) measures cumulative peak usage and fails to isolate incremental strategy overhead.",
+      "observed_behavior": "Both RAG and Lifecycle strategies recorded near-identical peak RSS values of ~794 MB since the measurement represents the process-wide high water mark.",
+      "affected_strategy": "rag and lifecycle",
+      "severity": "low",
+      "recoverability": "Not recoverable without changing the measurement methodology.",
+      "occurrence_frequency": "Observed consistently across all 10 evaluation tasks.",
+      "root_cause_status": "confirmed_root_cause",
+      "supporting_evidence": [
+        {
+          "step": "Step 1E",
+          "task_id": "all",
+          "diagnostic_test_id": null,
+          "metrics": {
+            "condition_a_mean_rss_mb": 793.96,
+            "condition_b_mean_rss_mb": 794.5
+          },
+          "observation": "The difference between Condition A and Condition B average RSS was only 0.54 MB, indicating cumulative process peak bias."
+        }
+      ],
+      "recommended_action": "additional experimentation"
+    }
+  ]
+}
