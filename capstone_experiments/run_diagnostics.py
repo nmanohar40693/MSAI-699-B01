@@ -54,7 +54,7 @@ def parse_arguments():
     )
     parser.add_argument(
         "--tasks",
-        default="/Users/krithigamahadevan/capstone_experiments/data/evaluation_tasks.json",
+        default=os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "evaluation_tasks.json"),
         help="Path to evaluation tasks JSON (defaults to complete 10-task dataset)."
     )
     parser.add_argument(
@@ -113,7 +113,6 @@ def main():
         actual_dataset_dir = config.dataset_dir
         if not os.path.exists(actual_dataset_dir):
             potential_paths = [
-                "/Users/krithigamahadevan/capstone_preprocessing/output/prepared_dataset",
                 os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "capstone_preprocessing", "output", "prepared_dataset")),
                 os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "capstone_preprocessing", "output", "prepared_dataset")),
             ]
